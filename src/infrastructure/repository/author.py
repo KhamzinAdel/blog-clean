@@ -123,23 +123,6 @@ class AuthorRepository(IAuthorRepository):
         except SQLAlchemyError as e:
             logger.error("Ошибка при совершении запроса на удаление автора: {}".format(e))
 
-    async def change_name(self, author_id: str, email: str) -> OutcomeMsgInfo | None:
-        try:
-            stmt = update(Author).where(Author.uuid == author_id).values(email=email).returning(Author.uuid)
-            result = await self._session.execute(stmt)
-            update_author_id = result.scalar()
-
-            if update_author_id is None:
-                raise NotPerformedActionException("Почта автора не была изменена: {}".format(author_id))
-
-            return OutcomeMsgInfo(
-                entity_id=f'{author_id}',
-                entity_name=EntityName.author.value,
-                entity_act=EntityAct.update.value,
-            )
-        except SQLAlchemyError as e:
-            logger.error("Ошибка при совершении запроса на изменение почты автора: {}".format(e))
-
     async def change_password(self, author_id: str, hashed_password: str) -> OutcomeMsgInfo | None:
         try:
             stmt = update(Author).where(Author.uuid == author_id).values(password=hashed_password).returning(Author.uuid)

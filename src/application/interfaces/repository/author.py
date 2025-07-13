@@ -21,6 +21,3 @@ class IAuthorRepository(Protocol):
 
     async def change_password(self, author_id: str, hashed_password: str):
         pass
-
-    async def change_name(self, author_id: str, email: str):
-        pass
