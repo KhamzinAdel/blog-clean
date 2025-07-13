@@ -38,8 +38,6 @@ class AuthorRepository(IAuthorRepository):
             if not result:
                 raise NotFoundInfoException("Автор с id {} не найден".format(author_id))
 
-            logger.info("Автор с id {} успешно найден!".format(author_id))
-
             return FullAuthorInfo(
                 uuid=f"{author_id}",
                 name=author_name,
@@ -53,8 +51,6 @@ class AuthorRepository(IAuthorRepository):
         query = select(Author.name, Author.email).offset(skip).limit(limit)
         result = await self._session.execute(query)
         results = result.mappings().all()
-
-        logger.info("Успешно получены авторы по определенному лимиту")
 
         return [
             AuthorInfo(
@@ -77,8 +73,6 @@ class AuthorRepository(IAuthorRepository):
             if not result:
                 raise NotFoundInfoException("Автор с email: {} не найден".format(author_email))
 
-            logger.info("Автор с email: {} успешно найден!".format(author_email))
-
             return FullAuthorInfo(
                 uuid=f"{author_id}",
                 name=author_name,
@@ -87,10 +81,10 @@ class AuthorRepository(IAuthorRepository):
         except SQLAlchemyError as e:
             logger.error("Ошибка при совершении запроса на получение автора по email: {}".format(e))
 
-    async def create_user(self, user_id: str, name: str, email: str, hashed_password: str) -> FullAuthorInfo | None:
+    async def create_author(self, author_id: str, name: str, email: str, hashed_password: str) -> FullAuthorInfo | None:
         try:
             stmt = insert(Author).values(
-                id=user_id,
+                id=author_id,
                 name=name,
                 email=email,
                 password=hashed_password,
@@ -104,7 +98,6 @@ class AuthorRepository(IAuthorRepository):
             new_author_data = result.fetchone()
 
             if new_author_data:
-                logger.info("Автор с id {} успешно создан!".format(new_author_data.uuid))
                 return FullAuthorInfo(
                     uuid=f"{new_author_data.uuid}",
                     name=new_author_data.name,
@@ -121,8 +114,6 @@ class AuthorRepository(IAuthorRepository):
 
             if delete_author_id is None:
                 raise NotPerformedActionException("Автор не был удален: {}".format(author_id))
-
-            logger.info("Автор с id {} успешно удален!".format(delete_author_id))
 
             return OutcomeMsgInfo(
                 entity_id=f'{delete_author_id}',
@@ -141,9 +132,6 @@ class AuthorRepository(IAuthorRepository):
             if update_author_id is None:
                 raise NotPerformedActionException("Почта автора не была изменена: {}".format(author_id))
 
-            logger.info("Почта автора с id {} успешно изменена!".format(update_author_id))
-
-
             return OutcomeMsgInfo(
                 entity_id=f'{author_id}',
                 entity_name=EntityName.author.value,
@@ -160,8 +148,6 @@ class AuthorRepository(IAuthorRepository):
 
             if update_author_id is None:
                 raise NotPerformedActionException("Пароль автора не был изменен: {}".format(author_id))
-
-            logger.info("Пароль автора с id {} успешно изменен!".format(update_author_id))
 
             return OutcomeMsgInfo(
                 entity_id=f'{author_id}',
