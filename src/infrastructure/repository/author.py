@@ -49,15 +49,19 @@ class AuthorRepository(IAuthorRepository):
 
     async def get_author_list_by_limit(self, skip: int = 0, limit: int = 100) -> list[AuthorInfo]:
         query = select(Author.name, Author.email).offset(skip).limit(limit)
-        result = await self._session.execute(query)
-        results = result.mappings().all()
 
-        return [
-            AuthorInfo(
-                name=result.name,
-                email=result.email,
-            ) for result in results
-        ]
+        try:
+            result = await self._session.execute(query)
+            results = result.mappings().all()
+
+            return [
+                AuthorInfo(
+                    name=result.name,
+                    email=result.email,
+                ) for result in results
+            ]
+        except SQLAlchemyError as e:
+            logger.error("Ошибка при совершении запроса на получение всех авторов: {}".format(e))
 
     async def get_author_by_email(self, email: str) -> FullAuthorInfo | None:
         query = select(
