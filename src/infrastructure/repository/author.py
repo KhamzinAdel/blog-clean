@@ -23,20 +23,21 @@ class AuthorRepository(IAuthorRepository):
     def __init__(self, session: AsyncSession):
         self._session = session
 
-
     async def get_author_by_id(self, author_id: str) -> FullAuthorInfo | None:
         query = select(
             Author.uuid,
             Author.name,
             Author.email,
-        ).where(Author.uuid==author_id)
+        ).where(Author.uuid == author_id)
 
         try:
             result = await self._session.execute(query)
-            author_id, author_name, author_email = result.fetchone()
+            row = result.fetchone()
 
-            if not result:
-                raise NotFoundInfoException("Автор с id {} не найден".format(author_id))
+            if not row:
+                raise NotFoundInfoException("Автор с id %s не найден" % author_id)
+
+            author_id, author_name, author_email = row
 
             return FullAuthorInfo(
                 uuid=f"{author_id}",
@@ -44,38 +45,39 @@ class AuthorRepository(IAuthorRepository):
                 email=author_email,
             )
         except SQLAlchemyError as e:
-            logger.error("Ошибка при совершении запроса на получение автора по id: {}".format(e))
-
+            logger.error("Ошибка при совершении запроса на получение автора по id: %s", e)
 
     async def get_author_list_by_limit(self, skip: int = 0, limit: int = 100) -> list[AuthorInfo]:
         query = select(Author.name, Author.email).offset(skip).limit(limit)
 
         try:
             result = await self._session.execute(query)
-            results = result.mappings().all()
+            results = result.scalars().all()
 
             return [
                 AuthorInfo(
-                    name=result.name,
-                    email=result.email,
-                ) for result in results
+                    name=row.name,
+                    email=row.email,
+                ) for row in results
             ]
         except SQLAlchemyError as e:
-            logger.error("Ошибка при совершении запроса на получение всех авторов: {}".format(e))
+            logger.error("Ошибка при совершении запроса на получение всех авторов: %s", e)
 
     async def get_author_by_email(self, email: str) -> FullAuthorInfo | None:
         query = select(
             Author.uuid,
             Author.name,
             Author.email,
-        ).where(Author.email==email)
+        ).where(Author.email == email)
 
         try:
             result = await self._session.execute(query)
-            author_id, author_name, author_email = result.one()
+            row = result.one()
 
-            if not result:
-                raise NotFoundInfoException("Автор с email: {} не найден".format(author_email))
+            if not row:
+                raise NotFoundInfoException("Автор с email: %s не найден" % email)
+
+            author_id, author_name, author_email = row
 
             return FullAuthorInfo(
                 uuid=f"{author_id}",
@@ -83,7 +85,7 @@ class AuthorRepository(IAuthorRepository):
                 email=author_email,
             )
         except SQLAlchemyError as e:
-            logger.error("Ошибка при совершении запроса на получение автора по email: {}".format(e))
+            logger.error("Ошибка при совершении запроса на получение автора по email: %s", e)
 
     async def create_author(self, author_id: str, name: str, email: str, hashed_password: str) -> FullAuthorInfo | None:
         try:
@@ -108,7 +110,7 @@ class AuthorRepository(IAuthorRepository):
                     email=new_author_data.email,
                 )
         except SQLAlchemyError as e:
-            logger.error("Ошибка при совершении запроса на создание автора: {}".format(e))
+            logger.error("Ошибка при совершении запроса на создание автора: %s", e)
 
     async def delete_author(self, author_id: str) -> OutcomeMsgInfo | None:
         try:
@@ -117,7 +119,7 @@ class AuthorRepository(IAuthorRepository):
             delete_author_id = result.scalar()
 
             if delete_author_id is None:
-                raise NotPerformedActionException("Автор не был удален: {}".format(author_id))
+                raise NotPerformedActionException("Автор не был удален: %s" % author_id)
 
             return OutcomeMsgInfo(
                 entity_id=f'{delete_author_id}',
@@ -125,7 +127,7 @@ class AuthorRepository(IAuthorRepository):
                 entity_act=EntityAct.delete.value,
             )
         except SQLAlchemyError as e:
-            logger.error("Ошибка при совершении запроса на удаление автора: {}".format(e))
+            logger.error("Ошибка при совершении запроса на удаление автора: %s", e)
 
     async def change_password(self, author_id: str, hashed_password: str) -> OutcomeMsgInfo | None:
         try:
@@ -134,7 +136,7 @@ class AuthorRepository(IAuthorRepository):
             update_author_id = result.scalar()
 
             if update_author_id is None:
-                raise NotPerformedActionException("Пароль автора не был изменен: {}".format(author_id))
+                raise NotPerformedActionException("Пароль автора не был изменен: %s" % author_id)
 
             return OutcomeMsgInfo(
                 entity_id=f'{author_id}',
@@ -142,4 +144,4 @@ class AuthorRepository(IAuthorRepository):
                 entity_act=EntityAct.update.value,
             )
         except SQLAlchemyError as e:
-            logger.error("Ошибка при совершении запроса на изменение пароля автора: {}".format(e))
+            logger.error("Ошибка при совершении запроса на изменение пароля автора: %s", e)
