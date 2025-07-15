@@ -13,7 +13,7 @@ class IPostService(Protocol):
     async def get_posts_by_author(self, author_id: str, skip: int, limit: int):
         pass
 
-    async def create_post(self, post_id: str, title: str, text: str, user_id: str):
+    async def create_post(self, title: str, text: str, user_id: str):
         pass
 
     async def delete_post(self, post_id: str, author_id: str):

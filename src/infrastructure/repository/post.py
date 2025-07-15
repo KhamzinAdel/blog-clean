@@ -126,10 +126,10 @@ class PostRepository(IPostRepository):
                 raise NotPerformedActionException("Пост не был создан.")
 
             return FullPostInfo(
-                uuid='%s' % new_post_data.uuid,
+                uuid=f"{new_post_data.uuid}",
                 title=new_post_data.title,
                 text=new_post_data.text,
-                created_at=new_post_data.created_at.strftime('%Y.%m.%d'),
+                created_at=new_post_data.created_at.strftime("%Y.%m.%d"),
                 is_published=new_post_data.is_published,
                 is_deleted=new_post_data.is_deleted,
                 author_id='%s' % new_post_data.author_id,
@@ -147,7 +147,7 @@ class PostRepository(IPostRepository):
                 raise NotPerformedActionException("Пост не был удален: %s" % author_id)
 
             return OutcomeMsgInfo(
-                entity_id='%s' % del_post_id,
+                entity_id=f"{del_post_id}",
                 entity_name=EntityName.post.value,
                 entity_act=EntityAct.delete.value,
             )
@@ -188,7 +188,7 @@ class PostRepository(IPostRepository):
                 text=updated_post.text,
                 is_published=updated_post.is_published,
                 created_at=updated_post.created_at,
-                author_id='%s' % updated_post.author_id,
+                author_id=f"{updated_post.author_id}",
             )
 
         except SQLAlchemyError as e:
