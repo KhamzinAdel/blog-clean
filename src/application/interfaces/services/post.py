@@ -1,8 +1,8 @@
 from typing import Protocol
 
 
-class IPostRepository(Protocol):
-    """Интерфейс репозитория постов"""
+class IPostService(Protocol):
+    """Интерфейс сервиса постов"""
 
     async def get_post_by_id(self, post_id: str):
         pass
