@@ -32,12 +32,12 @@ class AuthorRepository(IAuthorRepository):
 
         try:
             result = await self._session.execute(query)
-            row = result.fetchone()
+            author = result.fetchone()
 
-            if not row:
+            if not author:
                 raise NotFoundInfoException("Автор с id %s не найден" % author_id)
 
-            author_id, author_name, author_email = row
+            author_id, author_name, author_email = author
 
             return FullAuthorInfo(
                 uuid=f"{author_id}",
@@ -72,12 +72,12 @@ class AuthorRepository(IAuthorRepository):
 
         try:
             result = await self._session.execute(query)
-            row = result.one()
+            author = result.one()
 
-            if not row:
+            if not author:
                 raise NotFoundInfoException("Автор с email: %s не найден" % email)
 
-            author_id, author_name, author_email = row
+            author_id, author_name, author_email = author
 
             return FullAuthorInfo(
                 uuid=f"{author_id}",

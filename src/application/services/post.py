@@ -33,7 +33,6 @@ class PostService(IPostService):
         except PostServiceError as e:
             logger.error("Ошибка при получении постов: %s", e)
 
-
     async def get_posts_by_author(self, author_id: str, skip: int, limit: int) -> list[PostInfo]:
         try:
             result = await self.post_repo.get_posts_by_author(author_id=author_id, skip=skip, limit=limit)
@@ -50,7 +49,6 @@ class PostService(IPostService):
         except PostServiceError as e:
             await self.tm.rollback()
             logger.error("Ошибка при создании поста: %s", e)
-
 
     async def delete_post(self, post_id: str, author_id: str) -> PostInfo | None:
         try:
