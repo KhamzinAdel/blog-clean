@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select, update, delete, insert
 
 from src.application.interfaces.repository.author import IAuthorRepository
-from src.application.exceptions.exc_repository import (
+from src.application.exceptions.exp_repository import (
     NotFoundInfoException,
     NotPerformedActionException,
 )

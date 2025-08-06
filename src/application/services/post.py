@@ -7,7 +7,7 @@ from src.entities.outcome import OutcomeMsgInfo
 from src.application.interfaces.repository.post import IPostRepository
 from src.application.interfaces.repository.tm import ITransactionManager
 from src.application.interfaces.services.post import IPostService
-from src.application.exceptions.exc_service import PostServiceError
+from src.application.exceptions.exp_service import PostServiceError
 
 logger = logging.getLogger(__name__)
 

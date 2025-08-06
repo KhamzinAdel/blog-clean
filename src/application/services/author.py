@@ -6,7 +6,7 @@ from src.entities.outcome import OutcomeMsgInfo
 from src.application.interfaces.repository.author import IAuthorRepository
 from src.application.interfaces.repository.tm import ITransactionManager
 from src.application.interfaces.services.author import IAuthorService
-from src.application.exceptions.exc_service import AuthorServiceError
+from src.application.exceptions.exp_service import AuthorServiceError
 
 logger = logging.getLogger(__name__)
 

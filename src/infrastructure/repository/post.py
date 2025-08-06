@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select, update, delete, insert, func
 from sqlalchemy.orm import joinedload
 
-from src.application.exceptions.exc_repository import NotPerformedActionException
+from src.application.exceptions.exp_repository import NotPerformedActionException
 from src.entities.outcome import OutcomeMsgInfo, EntityName, EntityAct
 from src.entities.author import AuthorInfo
 from src.application.interfaces.repository.post import IPostRepository
